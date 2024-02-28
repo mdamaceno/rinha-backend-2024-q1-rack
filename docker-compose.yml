@@ -7,7 +7,7 @@ services:
       context: .
     hostname: app01
     environment:
-      DATABASE_URL: "postgres://postgres:postgres@db:5432/rinha2024?pool=30&encoding=utf-8"
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/rinha2024"
     volumes:
       - .:/rinha
     networks:
