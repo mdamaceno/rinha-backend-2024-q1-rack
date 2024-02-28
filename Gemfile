@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "rack"
-gem "puma"
+gem "falcon"
 gem "pg"
 gem "connection_pool"
 gem "json"

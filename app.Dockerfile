@@ -8,9 +8,11 @@ FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 WORKDIR /rinha
 
 # Set development environment
-ENV APP_ENV="development" \
+ENV APP_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
-    BUNDLE_PATH="/usr/local/bundle"
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="development"
+
 
 
 # Throw-away build stage to reduce size of final image
@@ -18,7 +20,7 @@ FROM base as build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential libvips pkg-config libpq-dev
+    apt-get install --no-install-recommends -y libpq-dev build-essential
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -33,7 +35,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libvips libpq-dev && \
+    apt-get install --no-install-recommends -y libpq-dev && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
@@ -46,4 +48,4 @@ USER rinha:rinha
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb", "--debug", "-v"]
+CMD ["bundle", "exec", "falcon", "serve", "-b", "http://0.0.0.0:9999", "--threaded"]
