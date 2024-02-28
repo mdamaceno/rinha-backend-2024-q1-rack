@@ -20,7 +20,7 @@ services:
       resources:
         limits:
           cpus: "0.3"
-          memory: "100MB"
+          memory: "75MB"
 
   app02:
     <<: *app01
@@ -41,14 +41,14 @@ services:
       - rinha-network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      interval: 10s
+      interval: 7s
       timeout: 5s
       retries: 5
     deploy:
       resources:
         limits:
           cpus: "0.7"
-          memory: "300MB"
+          memory: "350MB"
 
   nginx:
     image: nginx:1.25
