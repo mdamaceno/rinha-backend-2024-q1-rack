@@ -51,6 +51,10 @@ class Rinha2024Application
       if method == "POST" && first_path == "clientes" && third_path == "transacoes"
         parsed_body = JSON.parse(body)
 
+        unless valid_transaction?(parsed_body)
+          return [422, headers, [{ error: "Corpo da requisição inválido" }.to_json]]
+        end
+
         if balance - parsed_body["valor"].to_i < -1 * credit_limit && parsed_body["tipo"] == "d"
           return [422, headers, [{ error: "Crédito insuficiente" }.to_json]]
         end
@@ -77,5 +81,18 @@ class Rinha2024Application
   def get_balance(conn, account_id)
     query = "SELECT balance, credit_limit FROM accounts WHERE id = $1 LIMIT 1"
     conn.exec_params(query, [account_id]).first
+  end
+
+  def valid_transaction?(transaction)
+    if transaction["valor"].nil? || transaction["tipo"].nil? || transaction["descricao"].nil?
+      return false
+    end
+
+    return false unless transaction["valor"].respond_to?(:to_i)
+
+    transaction["valor"].to_i.positive? &&
+      %w[d c].include?(transaction["tipo"]) &&
+      transaction["descricao"].is_a?(String) &&
+      transaction["descricao"].length.positive? && transaction["descricao"].length <= 10
   end
 end
