@@ -27,7 +27,7 @@ class Rinha2024Application
     body = request.body.read
     headers = { "Content-Type" => "application/json" }
     status = 200
-    response_body = nil
+    response_body = ''
 
     first_path = path.split("/")[1]
     third_path = path.split("/")[3]
