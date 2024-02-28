@@ -44,17 +44,13 @@ class Rinha2024Application
       credit_limit = account["credit_limit"].to_i
 
       if method == "GET" && first_path == "clientes" && third_path == "extrato"
-        last_transactions = []
-
-        if balance.positive?
-          last_transactions = get_last_10_transactions(conn, account_id).map do |transaction|
-            {
-              valor: transaction["amount"].to_i,
-              tipo: transaction["kind"],
-              descricao: transaction["description"],
-              realizada_em: transaction["created_at"]
-            }
-          end
+        last_transactions = get_last_10_transactions(conn, account_id).map do |transaction|
+          {
+            valor: transaction["amount"].to_i,
+            tipo: transaction["kind"],
+            descricao: transaction["description"],
+            realizada_em: transaction["created_at"]
+          }
         end
 
         response_body = {
