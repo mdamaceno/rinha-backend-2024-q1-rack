@@ -106,9 +106,13 @@ class Rinha2024Application
       return false
     end
 
-    return false unless transaction["valor"].respond_to?(:to_i)
+    return false unless transaction["valor"].respond_to?(:to_f)
 
-    transaction["valor"].to_i.positive? &&
+    amount = transaction["valor"].to_f
+
+    return false if amount.numerator > amount.to_i
+
+    amount.to_i.positive? &&
       %w[d c].include?(transaction["tipo"]) &&
       transaction["descricao"].is_a?(String) &&
       transaction["descricao"].length.positive? && transaction["descricao"].length <= 10
