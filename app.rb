@@ -44,8 +44,26 @@ class Rinha2024Application
       credit_limit = account["credit_limit"].to_i
 
       if method == "GET" && first_path == "clientes" && third_path == "extrato"
-        response_body = { saldo: balance, limite: credit_limit }.to_json
-        puts response_body
+        last_transactions = []
+
+        if balance.positive?
+          last_transactions = get_last_10_transactions(conn, account_id).map do |transaction|
+            {
+              valor: transaction["amount"].to_i,
+              tipo: transaction["kind"],
+              descricao: transaction["description"],
+              realizada_em: transaction["created_at"]
+            }
+          end
+        end
+
+        response_body = {
+          saldo: {
+            total: balance,
+            limite: credit_limit
+          },
+          ultimas_transacoes: last_transactions
+        }.to_json
       end
 
       if method == "POST" && first_path == "clientes" && third_path == "transacoes"
@@ -94,5 +112,10 @@ class Rinha2024Application
       %w[d c].include?(transaction["tipo"]) &&
       transaction["descricao"].is_a?(String) &&
       transaction["descricao"].length.positive? && transaction["descricao"].length <= 10
+  end
+
+  def get_last_10_transactions(conn, account_id)
+    query = "SELECT * FROM ledgers WHERE account_id = $1 ORDER BY created_at DESC LIMIT 10"
+    conn.exec_params(query, [account_id]).to_a
   end
 end
