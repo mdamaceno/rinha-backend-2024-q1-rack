@@ -1,5 +1,5 @@
 require "bundler/setup"
-Bundler.require(:default)
+Bundler.require(:default, ENV.fetch("APP_ENV", "development").to_sym)
 
 class ConnectionManager
   @pool = nil
