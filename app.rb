@@ -12,7 +12,7 @@ class ConnectionManager
     private
 
     def create_pool
-      @pool = ConnectionPool.new(size: 30, timeout: 30) do
+      @pool = ConnectionPool.new(size: 35, timeout: 30) do
         PG.connect(ENV["DATABASE_URL"])
       end
     end
