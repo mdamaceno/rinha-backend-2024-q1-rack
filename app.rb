@@ -19,6 +19,9 @@ class ConnectionManager
   end
 end
 
+class CreditLimitExceededError < StandardError
+end
+
 class Rinha2024Application
   def call(env)
     request = Rack::Request.new(env)
@@ -70,12 +73,14 @@ class Rinha2024Application
         end
 
         if balance - parsed_body["valor"].to_i < -1 * credit_limit && parsed_body["tipo"] == "d"
-          return [422, headers, [{ error: "Crédito insuficiente" }.to_json]]
+          raise CreditLimitExceededError
         end
 
         conn.transaction do
           create_transaction(conn, account_id, parsed_body)
           account = get_balance(conn, account_id)
+
+          raise CreditLimitExceededError if account["balance"].to_i < -1 * credit_limit
 
           response_body = { saldo: account["balance"].to_i, limite: account["credit_limit"].to_i }.to_json
         end
@@ -83,6 +88,8 @@ class Rinha2024Application
     end
 
     [status, headers, [response_body]]
+  rescue CreditLimitExceededError
+    return [422, headers, [{ error: "Crédito insuficiente" }.to_json]]
   end
 
   private
