@@ -3,6 +3,7 @@ GEM
   specs:
     coderay (1.1.3)
     connection_pool (2.4.1)
+    json (2.7.1)
     method_source (1.0.0)
     nio4r (2.7.0)
     pg (1.5.5)
@@ -19,6 +20,7 @@ PLATFORMS
 
 DEPENDENCIES
   connection_pool
+  json
   pg
   pry
   puma
