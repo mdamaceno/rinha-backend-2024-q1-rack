@@ -1,6 +1,8 @@
 require "bundler/setup"
 Bundler.require(:default, ENV.fetch("APP_ENV", "development").to_sym)
 
+require "rack/handler/puma"
+
 class ConnectionManager
   @pool = nil
 
@@ -126,3 +128,5 @@ class Rinha2024Application
     conn.exec_params(query, [account_id]).to_a
   end
 end
+
+Rackup::Handler::Puma.run Rinha2024Application.new, Port: 9999

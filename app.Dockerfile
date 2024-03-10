@@ -48,4 +48,4 @@ USER rinha:rinha
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD ["bundle", "exec", "falcon", "serve", "-b", "http://0.0.0.0:9999", "--threaded"]
+CMD ["ruby", "app.rb"]
